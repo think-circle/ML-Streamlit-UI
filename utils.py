@@ -30,7 +30,7 @@ def transform_input(inp_list):
     cat_feat = ['Suburb','Type','Method']
     drop_feat = ['Street','Address','State','Postcode','Date','Agent','Price']
     #READ IN DATA
-    df= pd.read_csv('data/Melbourne/Melbourne_area.csv')
+    df= pd.read_csv('data/Melbourne/Melbourne_template.csv')
     df = df.dropna(how='any',axis=0)
 
     # Drop features that are not required
