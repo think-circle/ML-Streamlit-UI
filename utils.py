@@ -37,8 +37,7 @@ def transform_input(inp_list):
     if set(drop_feat).issubset(df.columns):
         df = df.drop(drop_feat, axis = 1)
 
-    #Add API input to to
-    df.iloc[0] = inp_list
+
 
     
     for feat in cat_feat:
