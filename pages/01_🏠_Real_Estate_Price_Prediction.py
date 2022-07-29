@@ -19,7 +19,7 @@ def show_predict_page():
     Method = ('auction','private treaty')
    
     suburb = st.selectbox("Suburb", Suburb)
-    type = st.selectbox("Type of Property", Type)
+    property_type = st.selectbox("Type of Property", Type)
     method = st.selectbox("Method of Sale", Method)
 
     rooms = st.slider("Number of Bedrooms", 1, 5, 3)
@@ -35,8 +35,8 @@ def show_predict_page():
     latitude,longitude = get_coordinates(suburb)
     
     if ok:
-        list = [suburb,type,method,rooms,bathrooms,cars,area,latitude,longitude,distance]
-        data = transform_input(list)
+        input_list = [suburb,property_type,method,rooms,bathrooms,cars,area,latitude,longitude,distance]
+        data = transform_input(input_list)
         r = requests.post(url="https://tf-serve-model.herokuapp.com/v1/models/model:predict", data=json.dumps(data))
         print(r.text)
         pred = r.json()["predictions"][0][0]
