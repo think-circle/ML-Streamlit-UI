@@ -37,7 +37,7 @@ def show_predict_page():
     if ok:
         list = [suburb,type,method,rooms,bathrooms,cars,area,latitude,longitude,distance]
         data = transform_input(list)
-        r = requests.post(url="http://localhost:8601/v1/models/real_estate_price_est:predict", data=json.dumps(data))
+        r = requests.post(url="https://tf-serve-model.herokuapp.com/v1/models/model:predict", data=json.dumps(data))
         print(r.text)
         pred = r.json()["predictions"][0][0]
         
