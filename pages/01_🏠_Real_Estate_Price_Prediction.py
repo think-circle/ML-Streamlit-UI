@@ -4,6 +4,8 @@ import numpy as np
 import requests
 import json
 import pandas as pd
+from datetime import date
+
 
 
 
@@ -33,9 +35,10 @@ def show_predict_page():
     # 
     distance = calc_distance(suburb)
     latitude,longitude = get_coordinates(suburb)
+    year = date.today().year
     
     if ok:
-        input_list = [suburb,property_type,method,rooms,bathrooms,cars,area,latitude,longitude,distance]
+        input_list = [suburb,property_type,method,rooms,bathrooms,cars,area,latitude,longitude,distance,year]
         data = transform_input(input_list)
         r = requests.post(url="https://tf-serve-model.herokuapp.com/v1/models/model:predict", data=json.dumps(data))
         print(r.text)
