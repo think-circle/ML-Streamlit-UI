@@ -36,15 +36,18 @@ def transform_input(inp_list):
     # Drop features that are not required
     if set(drop_feat).issubset(df.columns):
         df = df.drop(drop_feat, axis = 1)
-
+    print("After First Drop")
+    print(df.info())
 
 
     
     for feat in cat_feat:
         dummy = pd.get_dummies(df[feat], prefix=feat)
         df = pd.merge(left=df,right=dummy,left_index=True,right_index=True,)
-    #print(df[num_feat].info())
+
     df = df.drop(cat_feat, axis = 1)
+    print("After Cat Drop+one hot encoding")
+    print(df.info())
     df = df[(np.abs(stats.zscore(df[num_feat])) < 3).all(axis=1)]
     df = normalize(df)
     print(df.info())
