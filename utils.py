@@ -40,7 +40,7 @@ def transform_input(inp_list):
     print(df.info())
 
 
-    
+    df.iloc[0] = inp_list
     for feat in cat_feat:
         dummy = pd.get_dummies(df[feat], prefix=feat)
         df = pd.merge(left=df,right=dummy,left_index=True,right_index=True,)
