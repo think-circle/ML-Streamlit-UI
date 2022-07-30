@@ -38,7 +38,7 @@ def show_predict_page():
     year = date.today().year
     
     if ok:
-        input_list = [suburb,property_type,method,rooms,bathrooms,cars,area,latitude,longitude,distance,year]
+        input_list = [suburb,property_type,method,rooms,bathrooms,cars,area,latitude,longitude,distance]
         data = transform_input(input_list)
         r = requests.post(url="https://tf-serve-model.herokuapp.com/v1/models/model:predict", data=json.dumps(data))
         print(r.text)
