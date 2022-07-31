@@ -35,7 +35,7 @@ def show_predict_page():
     # 
     distance = calc_distance(suburb)
     latitude,longitude = get_coordinates(suburb)
-    year = date.today().year
+    #year = date.today().year
     
     if ok:
         input_list = [suburb,property_type,method,rooms,bathrooms,cars,area,latitude,longitude,distance]
