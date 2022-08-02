@@ -35,12 +35,15 @@ def show_predict_page():
     # 
     distance = calc_distance(suburb)
     latitude,longitude = get_coordinates(suburb)
-    #year = date.today().year
+    year = date.today().year
     
     if ok:
-        input_list = [suburb,property_type,method,rooms,bathrooms,cars,area,latitude,longitude,distance]
-        data = transform_input(input_list)
+        input_dict = {'Suburb':suburb,'Type': property_type,'Method': method,'Bedrooms':  rooms, 'Bathrooms':  bathrooms, 'Cars':  cars, 'Area':  area,'Latitude':  latitude,'Longitude':  longitude,'Distance':  distance, 'Year':  year}
+        #input_list = [suburb,property_type,method,rooms,bathrooms,cars,area,latitude,longitude,distance]
+        #data = transform_input(input_list)
+        data = {"instances": [input_dict]}
         r = requests.post(url="https://tf-serve-model.herokuapp.com/v1/models/model:predict", data=json.dumps(data))
+        #r = requests.post(url="http://localhost:8601/v1/models/real_estate_price_est:predict", data=json.dumps(data))
         print(r.text)
         pred = r.json()["predictions"][0][0]
         
