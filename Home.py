@@ -6,7 +6,7 @@ import requests
 
 
 # Find more emojis here: https://www.webfx.com/tools/emoji-cheat-sheet/
-st.set_page_config(page_title="My Webpage", page_icon=":tada:", layout="wide")
+st.set_page_config(page_title="thinkCircle AI by Khaled", page_icon=":tada:", layout="wide")
 
 
 def load_lottieurl(url):
@@ -26,12 +26,22 @@ local_css("style/style.css")
 
 # ---- LOAD ASSETS ----
 lottie_coding = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_fcfjwiyb.json")
-img_contact_form = Image.open("images/yt_contact_form.png")
+img_profile_pic = Image.open("images/tc_profile_pic.png")
+img_web_scraper = Image.open("images/tc_web_scraper.png")
+img_real_estate = Image.open("images/tc_real_estate.png")
+img_streamlit = Image.open("images/tc_streamlit.png")
 img_lottie_animation = Image.open("images/yt_lottie_animation.png")
 
 # ---- HEADER SECTION ----
 with st.container():
-    st.subheader("Hi, I am Khaled :wave:")
+    image_column, text_column = st.columns((1, 2))
+    with image_column:
+        st.image(img_profile_pic)
+    with text_column:
+        st.subheader("Hello :wave: I am Khaled")
+    
+    
+
     st.title("A Machine Learning Engineer From Australia")
     st.write(
         "I am passionate about learning and applying data science, machine learning & general programming to solve real life problems."
@@ -47,12 +57,15 @@ with st.container():
         st.write("##")
         st.write(
             """
-            On my YouTube channel I am creating tutorials for people who:
-            - are looking for a way to leverage the power of Python in their day-to-day work.
-            - are struggling with repetitive tasks in Excel and are looking for a way to use Python and VBA.
-            - want to learn Data Analysis & Data Science to perform meaningful and impactful analyses.
-            - are working with Excel and found themselves thinking - "there has to be a better way."
-            If this sounds interesting to you, consider subscribing and turning on the notifications, so you don’t miss any content.
+            On my Web page I am creating various Machine Learning, Data Analytics & General automation based projects in the following fields:
+            - Machine Learning Regression & Classifcation models utilizing Deep Neural Networks
+            - Computer Vision using Convolutional neural networks
+            - Natual Language Processing using Transformer models such as Bidirectional Encoder Representations from Transformers (BERT)
+            - Application Programming Interface (API) & ML model Serving such as Tensorflow Serving
+            - Automation projects such as Web scraping for Data collection & automated report preparation & email sending.
+            - Data Visualization & reporting
+            - MLOps  utilizing pipeline framework such as Google created Kubeflow, Airbnb created Apache Airflow & MLflow.
+            
             """
         )
         st.write("[YouTube Channel >](https://youtube.com/c/CodingIsFun)")
@@ -66,30 +79,47 @@ with st.container():
     st.write("##")
     image_column, text_column = st.columns((1, 2))
     with image_column:
-        st.image(img_lottie_animation)
+        st.image(img_web_scraper)
     with text_column:
-        st.subheader("Integrate Lottie Animations Inside Your Streamlit App")
+        st.subheader("DATA DATA DATA.....& more DATA!")
         st.write(
             """
-            Learn how to use Lottie Files in Streamlit!
-            Animations make our web app more engaging and fun, and Lottie Files are the easiest way to do it!
-            In this tutorial, I'll show you exactly how to do it
+            So How Do We Get Meaningful Data In The First Place?
+            Create a Python based Web Scraping App offcourse!
+            In this example, I created an application that extracts all the house details from a well known Australian
+            real estate website. The python program is based on Python BeautifulSoup. 
             """
         )
-        st.markdown("[Watch Video...](https://youtu.be/TXSOitGoINE)")
+        st.markdown("[See Code...](https://github.com/think-circle/ML-Web-Scraper.git)")
 with st.container():
     image_column, text_column = st.columns((1, 2))
     with image_column:
-        st.image(img_contact_form)
+        st.image(img_real_estate)
     with text_column:
-        st.subheader("How To Add A Contact Form To Your Streamlit App")
+        st.subheader("TENSORFLOW AUSTRALIAN REAL ESTATE PRICE PREDICTION ML")
         st.write(
             """
-            Want to add a contact form to your Streamlit website?
-            In this video, I'm going to show you how to implement a contact form in your Streamlit app using the free service ‘Form Submit’.
+           Tensorflow Deep Neural Network Regression to estimate the price of a home in Australian Real Estate, along with
+           Tensorflow Serving utilizing docker container.
             """
         )
-        st.markdown("[Watch Video...](https://youtu.be/FOULV9Xij_8)")
+        st.markdown("[See Code...](https://github.com/think-circle/MLrealestate.git)")
+
+
+with st.container():
+    image_column, text_column = st.columns((1, 2))
+    with image_column:
+        st.image(img_streamlit)
+    with text_column:
+        st.subheader("HEROS ARE LIT..STREAMLIT & HEROKU TO RESCUE ML ENGINEERS")
+        st.write(
+            """
+           Streamlit is a handsome  web UI based on Python that can be hosted on Heroku with Ease that allows you to focus
+           ML Engineering rather than being a fully fledged Front End Developer.
+            """
+        )
+        st.markdown("[See Code...](https://github.com/think-circle/ML-Streamlit-UI.git)")
+
 
 # ---- CONTACT ----
 with st.container():
