@@ -34,11 +34,13 @@ img_lottie_animation = Image.open("images/yt_lottie_animation.png")
 
 # ---- HEADER SECTION ----
 with st.container():
-    image_column, text_column = st.columns((1, 2))
+    image_column, text_column = st.columns((1, 4))
     with image_column:
-        st.image(img_profile_pic)
-    with text_column:
         st.subheader("Hello :wave: I am Khaled")
+        st.image(img_profile_pic)
+    # with text_column:
+    #     st.subheader("Hello :wave:")
+    #     st.subheader("I am Khaled")
     
     
 
@@ -114,7 +116,7 @@ with st.container():
         st.subheader("HEROS ARE LIT..STREAMLIT & HEROKU TO RESCUE ML ENGINEERS")
         st.write(
             """
-           Streamlit is a handsome  web UI based on Python that can be hosted on Heroku with Ease that allows you to focus
+           Streamlit is a handsome  web UI based on Python that can be hosted on Heroku with ease allowing you to focus
            ML Engineering rather than being a fully fledged Front End Developer.
             """
         )
