@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 
-city = st.sidebar.selectbox("Explore Or Predict", ("Melbourne", "Sydney","Brisbane"))
+city = st.sidebar.selectbox("Explore Or Predict", ("Melbourne", "Sydney","Brisbane","Perth","Adelaide"))
 
 if "shared" not in st.session_state:
    st.session_state["shared"] = True
@@ -15,7 +15,7 @@ if "shared" not in st.session_state:
 
 #@st.cache
 def load_data():
-    df = pd.read_csv(f"data/{city}/{city}_distance.csv")
+    df = pd.read_csv(f"data/{city}/{city}_area.csv")
     df["FullAddress"] = df['Street'].astype(str) +","+ df["Address"]
    
     return df
@@ -34,7 +34,7 @@ def show_explore_page():
     data = df["Suburb"].value_counts().sort_values(ascending= False)[0:max_disp1]
     fig1, ax1 = plt.subplots()
     ax1.pie(data, labels=data.index, autopct="%1.1f%%", shadow=True, startangle=90)
-    #ax1.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
+    ax1.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
 
 
     st.write(f"""#### Percentage of the Number of Properties Sold out of a Total of  {max_disp1} Suburbs""")
