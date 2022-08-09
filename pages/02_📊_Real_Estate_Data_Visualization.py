@@ -1,10 +1,6 @@
-from operator import index
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import plotly.express as px
-import numpy as np
-import datetime as dt
 
 
 city = st.sidebar.selectbox("Choose City", ("Melbourne", "Sydney","Brisbane","Perth","Adelaide"))
@@ -18,8 +14,8 @@ if "shared" not in st.session_state:
 def load_data():
     df = pd.read_csv(f"data/{city}/{city}_area.csv",
     usecols=['Street','Suburb', 'Date', 'Price','Area','Latitude','Longitude','Distance'],
-    dtype = {'Price':'int32','Distance':'float16','Suburb':'str','Latitude':'float16','Longitude':'float16'})#.sort_values(by=['Date'])
-    df['Date']= df['Date'].astype('datetime64[ns]').dt.strftime('%d-%m-%Y')
+    dtype = {'Price':'int32', 'Distance':'float16', 'Suburb':'category'})
+    #df['Date']= df['Date'].astype('datetime64[ns]').dt.strftime('%d-%m-%Y')
 
     return df
 
@@ -44,7 +40,10 @@ def show_explore_page(view , df):
             st.write("---")
             st.write("MAP VIEW OF ALL PROPERTIES")
             st.write("##")
-
+            #df['Suburb'] = df['Suburb'].astype('category')
+            df = df.drop(['Street'], axis=1)
+            if len(df.index) > 60000:
+                df = df[0:60000]
     
 
             price_range = st.slider('Select price range $:',int(df['Price'].min().item()) ,int(df['Price'].max().item()) , (int(df['Price'].quantile(0.25).item()),  int(df['Price'].quantile(0.75).item())))
@@ -54,19 +53,19 @@ def show_explore_page(view , df):
             area_range = st.slider('Select area range in SQM',int(df['Area'].min().item()) ,int(df['Area'].max().item()) , (int(df['Area'].quantile(0.25).item()),  int(df['Area'].quantile(0.75).item())))
             st.write('Minimum Area Selected SQM', area_range[0] )
             st.write('Maximum Area Selected SQM', area_range[1] )
-            df.Suburb.astype('category')
+            
+            
             df = df[(df.Price >= price_range[0]) & (df.Price < price_range[1]) & (df.Area >= area_range[0]) & (df.Area < area_range[1])]
 
-            fig = px.scatter_mapbox(df,lat = df['Latitude'],lon = df['Longitude'],zoom =8,color = df['Price'], size = df['Distance'],
-            text = df.Street + df.Suburb.astype(str), width = 1100, height = 800, 
-            title = f"{city} House Prices Map")#animation_frame = 'Date', animation_group = 'Suburb',
+            fig = px.scatter_mapbox(df, lat = df['Latitude'],lon = df['Longitude'],zoom =8,color = df['Price'], size = df['Distance'],
+            text = df.Suburb, width = 1100, height = 800, title = f"{city} House Prices Map")
             fig.update_layout(mapbox_style = 'open-street-map')
             fig.update_layout(margin = {'r':0 , 't': 50, 'l':0 , 'b':10})
             st.write(fig) 
     
 
 
-    # ----  BAR CHART VIEW OF DIFFERENT SUBURBS ----
+    # ----  BAR CHART COMPARISON OF DIFFERENT SUBURBS ----
     if view == 'Suburb Price Comparison':
         with st.container():
             st.write("---")
@@ -75,6 +74,7 @@ def show_explore_page(view , df):
             suburb_options = df['Suburb'].unique().tolist()
             suburb = st.multiselect('Which suburbs would you like to compare?',suburb_options,suburb_options[0])
             df = df[df['Suburb'].isin(suburb)]
+            df['Suburb'] = df['Suburb'].astype(str)
             fig = px.histogram(df,x = 'Suburb',y='Price', color = 'Suburb', barmode='group',histfunc='avg',title="Average Price per Suburb")
             st.write(fig)
 
