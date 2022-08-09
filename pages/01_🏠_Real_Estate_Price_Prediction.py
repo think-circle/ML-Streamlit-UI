@@ -53,8 +53,8 @@ def show_predict_page():
     ok = st.button("Calculate Price")
 
     # Calculation of distance,latitude,longitude & year
-    distance = calc_distance(suburb)
-    latitude,longitude = get_coordinates(suburb)
+    distance = calc_distance(suburb, city)
+    latitude,longitude = get_coordinates(suburb,city)
     year = date.today().year
     
     if ok:
