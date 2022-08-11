@@ -4,7 +4,7 @@ import plotly.express as px
 
 
 city = st.sidebar.selectbox("Choose City", ("Melbourne", "Sydney","Brisbane","Perth","Adelaide"))
-view = st.sidebar.selectbox("Choose View to display", ('Table','Map','Suburb Price Comparison','Top Suburbs'))
+view = st.sidebar.selectbox("Choose View to display", ('Table','Map','Suburb Price Comparison','Top Suburbs','Bottom Suburbs'))
 
 if "shared" not in st.session_state:
    st.session_state["shared"] = True
@@ -14,8 +14,11 @@ if "shared" not in st.session_state:
 def load_data():
     df = pd.read_csv(f"data/{city}/{city}_area.csv",
     usecols=['Street','Suburb', 'Date', 'Price','Area','Latitude','Longitude','Distance'],
-    dtype = {'Price':'int32', 'Distance':'float16', 'Suburb':'category'})
+    dtype = {'Price':'int32', 'Distance':'float16', 'Suburb':'str'})
+    df['Date']= pd.to_datetime(df.Date, infer_datetime_format=True)
+    df['Year'] = pd.DatetimeIndex(df['Date']).year
     #df['Date']= df['Date'].astype('datetime64[ns]').dt.strftime('%d-%m-%Y')
+    #df = df.drop(['Date',], axis=1)
 
     return df
 
@@ -42,25 +45,32 @@ def show_explore_page(view , df):
             st.write("##")
             #df['Suburb'] = df['Suburb'].astype('category')
             df = df.drop(['Street'], axis=1)
-            if len(df.index) > 60000:
-                df = df[0:60000]
+            if len(df.index) > 1000:
+                df = df[0:1000]
     
 
-            price_range = st.slider('Select price range $:',int(df['Price'].min().item()) ,int(df['Price'].max().item()) , (int(df['Price'].quantile(0.25).item()),  int(df['Price'].quantile(0.75).item())))
-            st.write('Minimum Price Selected $', price_range[0] )
-            st.write('Maximum Price Selected $', price_range[1] )
+            # price_range = st.slider('Select Price range $:',int(df['Price'].min().item()) ,int(df['Price'].max().item()) , (int(df['Price'].quantile(0.25).item()),  int(df['Price'].quantile(0.75).item())))
+            # st.write('Minimum Price Selected $', price_range[0] )
+            # st.write('Maximum Price Selected $', price_range[1] )
             
-            area_range = st.slider('Select area range in SQM',int(df['Area'].min().item()) ,int(df['Area'].max().item()) , (int(df['Area'].quantile(0.25).item()),  int(df['Area'].quantile(0.75).item())))
-            st.write('Minimum Area Selected SQM', area_range[0] )
-            st.write('Maximum Area Selected SQM', area_range[1] )
-            
-            
-            df = df[(df.Price >= price_range[0]) & (df.Price < price_range[1]) & (df.Area >= area_range[0]) & (df.Area < area_range[1])]
+            # area_range = st.slider('Select Area range in SQM',int(df['Area'].min().item()) ,int(df['Area'].max().item()) , (int(df['Area'].quantile(0.25).item()),  int(df['Area'].quantile(0.75).item())))
+            # st.write('Minimum Area Selected SQM', area_range[0] )
+            # st.write('Maximum Area Selected SQM', area_range[1] )
 
-            fig = px.scatter_mapbox(df, lat = df['Latitude'],lon = df['Longitude'],zoom =8,color = df['Price'], size = df['Distance'],
-            text = df.Suburb, width = 1100, height = 800, title = f"{city} House Prices Map")
+            # year_range = st.slider('Select Year range',int(df['Year'].min().item()) ,int(df['Year'].max().item()) , (int(df['Year'].quantile(0.25).item()),  int(df['Year'].quantile(0.75).item())))
+            # st.write('Minimum Year', year_range[0] )
+            # st.write('Maximum Year', year_range[1] )
+            
+            
+            # df = df[(df.Price >= price_range[0]) & (df.Price < price_range[1]) & (df.Area >= area_range[0]) & (df.Area < area_range[1])] #& (df.Year >= year_range[0]) & (df.Year < year_range[1])]
+            df = df.sort_values('Date', ascending=True)
+            df['Date'] = df['Date'].dt.strftime('%m-%d-%Y')
+            fig = px.scatter_mapbox(df, lat="Latitude", lon="Longitude",animation_frame = 'Date', animation_group = 'Suburb',
+                  color="Suburb", size="Distance",zoom=7.75, hover_name='Suburb', hover_data = ['Suburb'], size_max=70,
+                  title = 'Accumulative COVID-19 Confirmed Cases')
             fig.update_layout(mapbox_style = 'open-street-map')
             fig.update_layout(margin = {'r':0 , 't': 50, 'l':0 , 'b':10})
+            # fig.update_layout(showlegend = False)
             st.write(fig) 
     
 
@@ -83,16 +93,38 @@ def show_explore_page(view , df):
     if view == 'Top Suburbs':
         with st.container():
             st.write("---")
-            st.write("AVERAGE PRICE OF SUBURB COMPARISON")
+            st.write("TOP SUBURBS MEDIAN CATEGORIES")
             st.write("##")
-            max_disp1 = st.slider("Maximum Number of Suburb to display", 3, 25, 10)
+            max_disp = st.slider("Maximum Number of Suburbs to display", 3, 25, 10)
+            category_list = ['Price','Area','Distance']
+            category = st.selectbox("Choose Category", category_list)
+            if category =='Distance':
+                ascending = True
+            else:
+                ascending = False
+            
+            df = df.groupby('Suburb')[category].median().sort_values(ascending= ascending)[0:max_disp]
+            fig = px.bar(df,x=category,y= df.index,color = df.index.astype(str), orientation="h",title= f"Top {max_disp} Suburbs in {city} in terms of {category}")
+            st.write(fig)
+    
+    # ----  BAR CHART VIEW OF TOP SUBURBS ----
+    if view == 'Bottom Suburbs':
+        with st.container():
+            st.write("---")
+            st.write("TOP SUBURBS MEDIAN CATEGORIES")
+            st.write("##")
+            max_disp = st.slider("Maximum Number of Suburbs to display", 3, 25, 10)
+            category_list = ['Price','Area','Distance']
+            category = st.selectbox("Choose Category", category_list)
+            if category =='Distance':
+                ascending = False
+            else:
+                ascending = True
+            df = df.groupby('Suburb')[category].median().sort_values(ascending= ascending)[0:max_disp]
+            fig = px.bar(df,x=category,y= df.index,color = df.index.astype(str), orientation="h",title= f"Bottom {max_disp} Suburbs in {city}")
+            st.write(fig)
 
-    # with st.container():
-    #     max_disp1 = st.slider("Maximum Number of Suburb Sample Size", 3, 25, 10)
-    #     data = df["Suburb"].value_counts().sort_values(ascending= False)[0:max_disp1]
-    #     fig1, ax1 = plt.subplots()
-    #     ax1.pie(data, labels=data.index, autopct="%1.1f%%", shadow=False, startangle=90)
-    #     ax1.axis("equal")  # Equal aspect ratio ensures that pie is drawn as a circle.
+
 
 
     #     st.write(f"""#### Percentage of the Number of Properties Sold out of a Total of  {max_disp1} Suburbs""")
