@@ -22,6 +22,8 @@ def load_data():
     df = df.sort_values('Year', ascending=True)
     #df['Date']= df['Date'].astype('datetime64[ns]').dt.strftime('%d-%m-%Y')
     df = df.drop(['Date',], axis=1)
+    df = df.drop(['Street',], axis=1)
+    
 
     return df
 
@@ -46,12 +48,12 @@ def show_explore_page(view , df):
             st.write("---")
             st.write("MAP VIEW OF ALL PROPERTIES")
             st.write("##")
-            
-            if len(df.index) > 50000:
-                df = df[0:50000]
+            max_records = st.sidebar.slider("Maximum Number of Records to import", 0, 110000, 10000)
+            if len(df.index) > max_records:
+                df = df[0:max_records]
             
     
-
+            #total_records = len(df.index)
             price_range = st.slider('Select Price range $:',int(df['Price'].min().item()) ,int(df['Price'].max().item()) , (int(df['Price'].quantile(0.25).item()),  int(df['Price'].quantile(0.75).item())))
             st.write('Minimum Price Selected $', price_range[0] )
             st.write('Maximum Price Selected $', price_range[1] )
@@ -65,10 +67,11 @@ def show_explore_page(view , df):
             st.write('Maximum Year', year_range[1] )
             
             df = df[(df.Price >= price_range[0]) & (df.Price < price_range[1]) & (df.Area >= area_range[0]) & (df.Area < area_range[1]) & (df.Year >= year_range[0]) & (df.Year < year_range[1])]
-            
+            showing_records = len(df.index)
             df['Suburb'] = df['Suburb'].astype('str')
-
-            fig = px.scatter_mapbox(df, lat="Latitude", lon="Longitude",color="Suburb", size="Distance",zoom=7.75, hover_name='Suburb', hover_data = ['Street','Suburb','Price','Area','Year'], size_max=20,
+            
+            st.write(f"Showing {showing_records} out of a total {max_records} records")
+            fig = px.scatter_mapbox(df, lat="Latitude", lon="Longitude",color="Suburb", size="Distance",zoom=7.75, hover_name='Suburb', hover_data = ['Suburb','Price','Area','Year'], size_max=20,
                   title = f"{city}  Map View")
                   #animation_frame = 'Date', animation_group = 'Suburb',
             fig.update_layout(mapbox_style = 'open-street-map')
