@@ -68,10 +68,10 @@ def show_explore_page(view , df):
             
             df = df[(df.Price >= price_range[0]) & (df.Price < price_range[1]) & (df.Area >= area_range[0]) & (df.Area < area_range[1]) & (df.Year >= year_range[0]) & (df.Year < year_range[1])]
             showing_records = len(df.index)
-            df['Suburb'] = df['Suburb'].astype('str')
+            #df['Suburb'] = df['Suburb'].astype('str')
             
             st.write(f"Showing {showing_records} out of a total {max_records} records")
-            fig = px.scatter_mapbox(df, lat="Latitude", lon="Longitude",color="Suburb", size="Distance",zoom=7.75, hover_name='Suburb', hover_data = ['Suburb','Price','Area','Year'], size_max=20,
+            fig = px.scatter_mapbox(df, lat="Latitude", lon="Longitude",color="Price", size="Distance",zoom=7.75, hover_name='Suburb', hover_data = ['Suburb','Price','Area','Year'], size_max=20,
                   title = f"{city}  Map View")
                   #animation_frame = 'Date', animation_group = 'Suburb',
             fig.update_layout(mapbox_style = 'open-street-map')
