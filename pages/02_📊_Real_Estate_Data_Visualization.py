@@ -96,7 +96,8 @@ def show_explore_page(view , df,total_records):
             df = df.sort_values(by="Year")
             
             fig = px.histogram(df,x = 'Suburb',y='Price', color = 'Suburb', barmode='group',histfunc='avg',title="Average Price per Suburb",
-            animation_frame = df['Year'], animation_group = 'Suburb',layout_yaxis_range=[0,max_price])
+            animation_frame = df['Year'], animation_group = 'Suburb',)
+            fig.update_layout(yaxis_range=[0,max_price])
             fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 000
             st.write(fig)
 
