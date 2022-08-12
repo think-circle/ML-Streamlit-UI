@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from utils import reduce_mem_usage
 
 
 city = st.sidebar.selectbox("Choose City", ("Melbourne", "Sydney","Brisbane","Perth","Adelaide"))
@@ -12,24 +13,19 @@ if "shared" not in st.session_state:
 
 #@st.cache
 def load_data():
-    df = pd.read_csv(f"data/{city}/{city}_area.csv",
-    usecols=['Street','Suburb', 'Date', 'Price','Area','Latitude','Longitude','Distance'],
-    dtype = {'Price':'int32', 'Distance':'float16', 'Suburb':'category'})
+    df = pd.read_csv(f"data/{city}/{city}_area.csv",usecols=['Street','Suburb', 'Date', 'Price','Area','Latitude','Longitude','Distance'],
+    dtype = {'Suburb':'category', 'Price':'int32','Area':'int32', 'Distance':'float16',  })
+    #df = reduce_mem_usage(df)
     df['Date']= pd.to_datetime(df.Date, infer_datetime_format=True)
     df['Date'] = df['Date'].dt.strftime('%m-%d-%Y')
-    df = df.sort_values('Date', ascending=True)
     df['Year'] = pd.DatetimeIndex(df['Date']).year
-    df = df.sort_values('Year', ascending=True)
-    #df['Date']= df['Date'].astype('datetime64[ns]').dt.strftime('%d-%m-%Y')
-    df = df.drop(['Date',], axis=1)
-    df = df.drop(['Street',], axis=1)
     
 
     return df
 
 
 
-def show_explore_page(view , df):
+def show_explore_page(view , df,total_records):
     st.title(f"{city.upper()} REAL ESTATE DATA VISUALISATION")
 
 
@@ -48,37 +44,41 @@ def show_explore_page(view , df):
             st.write("---")
             st.write("MAP VIEW OF ALL PROPERTIES")
             st.write("##")
-            max_records = st.sidebar.slider("Maximum Number of Records to import", 0, 110000, 10000)
-            if len(df.index) > max_records:
-                df = df[0:max_records]
+            suburb_options = df['Suburb'].unique().tolist()
+            suburb = st.multiselect('Which suburbs would you like to view on the map?',suburb_options,suburb_options[0])
+            df = df[df['Suburb'].isin(suburb)]
+            df['Suburb'] = df['Suburb'].astype(str)
+            df = df.sort_values('Year', ascending=True)
             
-    
-            #total_records = len(df.index)
-            price_range = st.slider('Select Price range $:',int(df['Price'].min().item()) ,int(df['Price'].max().item()) , (int(df['Price'].quantile(0.25).item()),  int(df['Price'].quantile(0.75).item())))
+            # import_records = st.sidebar.slider("Maximum Number of Records to import", 0, total_records , 20000)
+            # df = df[0:import_records]
+            price_range = st.slider('Select Price range $:',int(df['Price'].min().item()) ,int(df['Price'].max().item()) , (int(df['Price'].min().item()),  int(df['Price'].max().item())))
             st.write('Minimum Price Selected $', price_range[0] )
             st.write('Maximum Price Selected $', price_range[1] )
             
-            area_range = st.slider('Select Area range in SQM',int(df['Area'].min().item()) ,int(df['Area'].max().item()) , (int(df['Area'].quantile(0.25).item()),  int(df['Area'].quantile(0.75).item())))
-            st.write('Minimum Area Selected SQM', area_range[0] )
-            st.write('Maximum Area Selected SQM', area_range[1] )
+            area_range = st.slider('Select Area range in SQM',int(df['Area'].min().item()) ,int(df['Area'].max().item()) , (int(df['Area'].min().item()),  int(df['Area'].max().item())))
+            st.write('Minimum Area Selected SQM', area_range[0])
+            st.write('Maximum Area Selected SQM', area_range[1])
 
-            year_range = st.slider('Select Year range',int(df['Year'].min().item()) ,int(df['Year'].max().item()) , (int(df['Year'].quantile(0.25).item()),  int(df['Year'].quantile(0.75).item())))
+            year_range = st.slider('Select Year range',int(df['Year'].min().item()) ,int(df['Year'].max().item()) , (int(df['Year'].min().item()),  int(df['Year'].max().item())))
             st.write('Minimum Year', year_range[0] )
             st.write('Maximum Year', year_range[1] )
             
-            df = df[(df.Price >= price_range[0]) & (df.Price < price_range[1]) & (df.Area >= area_range[0]) & (df.Area < area_range[1]) & (df.Year >= year_range[0]) & (df.Year < year_range[1])]
+            df = df[(df.Price >= price_range[0]) & (df.Price <= price_range[1]) & (df.Area >= area_range[0]) & (df.Area <= area_range[1]) & (df.Year >= year_range[0]) & (df.Year <= year_range[1])]
             showing_records = len(df.index)
-            #df['Suburb'] = df['Suburb'].astype('str')
-            
-            st.write(f"Showing {showing_records} out of a total {max_records} records")
-            fig = px.scatter_mapbox(df, lat="Latitude", lon="Longitude",color="Price", size="Distance",zoom=7.75, hover_name='Suburb', hover_data = ['Price'], size_max=20,
-                  title = f"{city}  Map View")
+            fig = px.scatter_mapbox(df, lat="Latitude", lon="Longitude",color="Suburb", size="Price",zoom=8,hover_name = 'Price' , hover_data= ['Street','Suburb','Price','Area','Date','Latitude','Longitude'],
+                  title = f"{city}  Map View",animation_frame = 'Year', animation_group = 'Suburb')
                   #animation_frame = 'Date', animation_group = 'Suburb',
             fig.update_layout(mapbox_style = 'open-street-map')
             fig.update_layout(margin = {'r':0 , 't': 50, 'l':0 , 'b':10})
             fig.update_layout(width = 800,height = 600)
             # fig.update_layout(showlegend = False)
-            st.write(fig) 
+            st.write(fig)
+
+            st.write(f"Showing {showing_records} records out of a total {total_records} records for {city}")
+            for suburb, count in df['Suburb'].value_counts().items():
+                st.write(f"{suburb}: {count} PROPERTIES")
+
     
 
 
@@ -110,12 +110,16 @@ def show_explore_page(view , df):
                 ascending = True
             else:
                 ascending = False
-
-            df = df.groupby('Suburb')[category].median().sort_values(ascending= ascending)[0:max_disp]
-            fig = px.bar(df,x=category,y= df.index,color = df.index.astype(str), orientation="h",title= f"Top {max_disp} Suburbs in {city} in terms of {category}")
+            
+            df_top = df.groupby('Suburb')[category].median().to_frame().sort_values(by=[category],ascending= ascending).head(max_disp).reset_index()
+            df = df[df['Suburb'].isin(df_top.Suburb)]
+            df = df.sort_values('Year', ascending=True)
+        
+            fig = px.histogram(df,x= category,y= df['Suburb'],color = df.Suburb.astype(str),histfunc='avg',orientation="h",title= f"Top {max_disp} Suburbs in {city} in terms of {category}",width=1100,height = 600,
+            animation_frame = 'Year', animation_group = df.Suburb.astype(str))
             st.write(fig)
     
-    # ----  BAR CHART VIEW OF TOP SUBURBS ----
+    # ----  BAR CHART VIEW OF BOTTOM SUBURBS ----
     if view == 'Bottom Suburbs':
         with st.container():
             st.write("---")
@@ -129,7 +133,7 @@ def show_explore_page(view , df):
             else:
                 ascending = True
             df = df.groupby('Suburb')[category].median().sort_values(ascending= ascending)[0:max_disp]
-            fig = px.bar(df,x=category,y= df.index,color = df.index.astype(str), orientation="h",title= f"Bottom {max_disp} Suburbs in {city}")
+            fig = px.bar(df,x=category,y= df.index,color = df.index.astype(str), orientation="h",title= f"Bottom {max_disp} Suburbs in {city}",width=1100,height = 600)
             st.write(fig)
 
 
@@ -162,7 +166,7 @@ def show_explore_page(view , df):
 
 
 df = load_data()
-show_explore_page(view, df)
+show_explore_page(view, df,len(df.index))
 
 
 # def downcast_dtypes(df):
