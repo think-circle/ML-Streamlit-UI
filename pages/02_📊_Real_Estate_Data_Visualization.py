@@ -90,15 +90,15 @@ def show_explore_page(view , df,total_records):
             st.write("##")
             suburb_options = df['Suburb'].unique().tolist()
             suburb = st.multiselect('Which suburbs would you like to compare?',suburb_options,suburb_options[0])
-            max_price = 8000000
+            # max_price = 8000000
             df = df[df['Suburb'].isin(suburb)]
             df['Suburb'] = df['Suburb'].astype(str)
             df = df.sort_values(by="Year")
             
             fig = px.histogram(df,x = 'Suburb',y='Price', color = 'Suburb', barmode='group',histfunc='avg',title="Average Price per Suburb",
             animation_frame = df['Year'], animation_group = 'Suburb',)
-            fig.update_layout(yaxis_range=[0,max_price])
-            fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 2000
+            # fig.update_layout(yaxis_range=[0,max_price])
+            # fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 2000
             st.write(fig)
 
 
