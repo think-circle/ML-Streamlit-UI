@@ -92,8 +92,10 @@ def show_explore_page(view , df,total_records):
             suburb = st.multiselect('Which suburbs would you like to compare?',suburb_options,suburb_options[0])
             df = df[df['Suburb'].isin(suburb)]
             df['Suburb'] = df['Suburb'].astype(str)
+            df = df.sort_values(by="Year")
             
             fig = px.histogram(df,x = 'Suburb',y='Price', color = 'Suburb', barmode='group',histfunc='avg',title="Average Price per Suburb",animation_frame = df['Year'], animation_group = 'Suburb')
+            fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 2000
             st.write(fig)
 
 
@@ -111,12 +113,8 @@ def show_explore_page(view , df,total_records):
             else:
                 ascending = False
             
-            df_top = df.groupby('Suburb')[category].median().to_frame().sort_values(by=[category],ascending= ascending).head(max_disp).reset_index()
-            df = df[df['Suburb'].isin(df_top.Suburb)]
-            df = df.sort_values('Year', ascending=True)
-        
-            fig = px.histogram(df,x= category,y= df['Suburb'],color = df.Suburb.astype(str),histfunc='avg',orientation="h",title= f"Top {max_disp} Suburbs in {city} in terms of {category}",width=1100,height = 600,
-            animation_frame = 'Year', animation_group = df.Suburb.astype(str))
+            df = df.groupby('Suburb')[category].median().sort_values(ascending= ascending)[0:max_disp]
+            fig = px.histogram(df,x= category,y= df.index,color = df.index.astype(str),orientation="h",title= f"Top {max_disp} Suburbs in {city} in terms of {category}",width=1100,height = 600, )
             st.write(fig)
     
     # ----  BAR CHART VIEW OF BOTTOM SUBURBS ----
@@ -133,7 +131,7 @@ def show_explore_page(view , df,total_records):
             else:
                 ascending = True
             df = df.groupby('Suburb')[category].median().sort_values(ascending= ascending)[0:max_disp]
-            fig = px.bar(df,x=category,y= df.index,color = df.index.astype(str), orientation="h",title= f"Bottom {max_disp} Suburbs in {city}",width=1100,height = 600)
+            fig = px.bar(df,x=category,y= df.index,color = df.index.astype(str), orientation="h",title= f"Bottom {max_disp} Suburbs in {city} in terms of {category}",width=1100,height = 600)
             st.write(fig)
 
 
