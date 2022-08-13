@@ -60,7 +60,7 @@ def show_predict_page():
     if ok:
         input_dict = {'Suburb':suburb,'Type': property_type,'Method': method,'Bedrooms':  rooms, 'Bathrooms':  bathrooms, 'Cars':  cars, 'Area':  area,'Latitude':  latitude,'Longitude':  longitude,'Distance':  distance, 'Year':  year}
         data = {"instances": [input_dict]}
-        r = requests.post(url="https://tf-serve-model.herokuapp.com/v1/models/model:predict", data=json.dumps(data))
+        r = requests.post(url=f"https://tf-serve-model.herokuapp.com/v1/models/{city}/model:predict", data=json.dumps(data))
         #r = requests.post(url="http://localhost:8601/v1/models/real_estate_price_est:predict", data=json.dumps(data))
         print(r.text)
         pred = r.json()["predictions"][0][0]
