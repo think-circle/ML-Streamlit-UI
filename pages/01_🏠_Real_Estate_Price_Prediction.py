@@ -5,6 +5,7 @@ import json
 from datetime import date
 from PIL import Image
 from constants import Melbourne_suburbs,Sydney_suburbs,Brisbane_suburbs,Adelaide_suburbs,Perth_suburbs
+import numpy as np
 
 
 
@@ -61,7 +62,7 @@ def show_predict_page():
     if ok:
         input_dict = {'Suburb':suburb,'Type': property_type,'Method': method,'Bedrooms':  rooms, 'Bathrooms':  bathrooms, 'Cars':  cars, 'Area':  area,'Latitude':  latitude,'Longitude':  longitude,'Distance':  distance, 'Year':  year}
         data = {"instances": [input_dict]}
-        
+        # vers = 9
         vers = city_list.index(city)+1
         r = requests.post(url=f"https://tf-serve-model.herokuapp.com/v1/models/model/versions/{vers}:predict", data=json.dumps(data))
         #r = requests.post(url="http://localhost:8601/v1/models/real_estate_price_est:predict", data=json.dumps(data))
