@@ -6,12 +6,12 @@ import numpy as np
 from io import BytesIO
 import requests
 
-st.header('POTATOE CLASSIFICATION')
+st.header('POTATO DISEASE CLASSIFICATION')
 
 
 c1,c2,c3 = st.columns([2,8,2])
 c1.markdown('\n')
-c1.image('https://www.nurseryrhymes.org/nursery-rhymes-styles/images/one-potatoe-two-potatoes.jpg')
+c1.image('https://img.freepik.com/premium-vector/cute-potato-farmer-cartoon-illustration-vegetable-cartoon-vector-illustration_290315-688.jpg?w=2000')
 
 
 endpoint = "https://tf-serve-model1.herokuapp.com/v1/models/model/versions/1:predict"
@@ -32,33 +32,24 @@ if uploaded_image is not None:
     prediction = np.array(response.json()["predictions"][0])
 
     predicted_class = class_names[np.argmax(prediction)]
-    confidence = np.max(prediction)
+    confidence = 100*round(np.max(prediction),2)
     c1.markdown(predicted_class)
     c1.markdown(confidence)
 
-# Camera with Porgress bar
-camera_image = c2.camera_input('Take a Photo!!!')
-if camera_image is not None:
-    progress_bar = c2.progress(0)
-    for percent_comp in range(100):
-        time.sleep(0.02)
-        progress_bar.progress(percent_comp+1)
-    c2.success('Photo taken successfully')
 
-
-c3.metric(label = 'Class', value = '60' + '\u00b0'+'C',delta = '3' + '\u00b0'+'C')
+c3.metric(label = 'Predicted Classification', value = predicted_class ,delta = confidence +'%')
 
 
 
-with st.expander('Click to see more info'):
-    st.write('Currently Selected image for prediction:')
+with st.expander('Click here to see result:'):
+    
     if uploaded_image is not None:
+        st.write('CLASSIFICATION: '+predicted_class)
+        st.write('CONFIDENCE: '+confidence +'%')
         st.image(uploaded_image)
-    elif camera_image is not None:
-        st.image(camera_image)
     else:
-        st.write('No Image uploaded or taken')
-        st.image('https://www.nurseryrhymes.org/nursery-rhymes-styles/images/one-potatoe-two-potatoes.jpg')
+        st.write('No Image uploaded')
+        st.image('https://img.freepik.com/premium-vector/cute-potato-farmer-cartoon-illustration-vegetable-cartoon-vector-illustration_290315-688.jpg?w=2000')
        
           
 
