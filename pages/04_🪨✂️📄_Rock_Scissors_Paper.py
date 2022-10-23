@@ -35,8 +35,10 @@ if camera_image is not None:
 
     response = requests.post(endpoint, json=json_data)
     prediction = np.array(response.json()["predictions"][0])
+    print(prediction)
 
     predicted_class = class_names[np.argmax(prediction)]
+    print(predicted_class)
     confidence = 100*round(np.max(prediction),2)
 
 
