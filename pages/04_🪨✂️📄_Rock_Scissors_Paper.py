@@ -16,8 +16,8 @@ c1.image('https://www.wikihow.com/images/thumb/3/33/Play-Rock%2C-Paper%2C-Scisso
 
 endpoint = "https://tf-serve-model1.herokuapp.com/v1/models/model/versions/1:predict"
 class_names = ["rock", "scissors", "paper"]
-predicted_class,confidence = ''
-
+predicted_class = ''
+confidence = ''
 # Camera with Porgress bar
 camera_image = c2.camera_input('Take a Photo!!!')
 if camera_image is not None:

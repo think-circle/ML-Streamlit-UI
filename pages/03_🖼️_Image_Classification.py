@@ -17,7 +17,8 @@ c1.image('https://img.freepik.com/premium-vector/cute-potato-farmer-cartoon-illu
 endpoint = "https://tf-serve-model1.herokuapp.com/v1/models/model/versions/1:predict"
 class_names = ["Early Blight", "Late Blight", "Healthy"]
 
-predicted_class,confidence = ''
+predicted_class = ''
+confidence = ''
 # Upload an Image & make a prediction
 uploaded_image  = c2.file_uploader('Choose Image to upload',type = ['jpeg','jpg','png'])
 if uploaded_image is not None:
