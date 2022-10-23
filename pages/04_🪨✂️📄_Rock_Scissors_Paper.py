@@ -15,7 +15,7 @@ c1.image('https://www.wikihow.com/images/thumb/3/33/Play-Rock%2C-Paper%2C-Scisso
 
 
 endpoint = "https://tf-serve-rsp.herokuapp.com/v1/models/model/versions/1:predict"
-class_names = ["rock", "scissors", "paper"]
+class_names = ['paper', 'rock', 'scissors']
 predicted_class = ''
 confidence = ''
 # Camera with Porgress bar
