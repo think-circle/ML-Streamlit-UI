@@ -45,7 +45,7 @@ with st.expander('Click here to see result:'):
     
     if uploaded_image is not None:
         st.write('CLASSIFICATION: '+predicted_class)
-        st.write('CONFIDENCE: '+confidence +'%')
+        st.write('CONFIDENCE: '+ str(confidence) +'%')
         st.image(uploaded_image)
     else:
         st.write('No Image uploaded')
