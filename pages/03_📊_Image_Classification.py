@@ -22,7 +22,7 @@ class_names = ["Early Blight", "Late Blight", "Healthy"]
 uploaded_image  = c2.file_uploader('Choose Image to upload',type = ['jpeg','jpg','png'])
 if uploaded_image is not None:
     c2.success('Image uploaded successfully')
-    image = np.array(Image.open(BytesIO(uploaded_image)))
+    image = np.array(Image.open(BytesIO(uploaded_image.read())))
     img_batch = np.expand_dims(image, 0)
     json_data = {
         "instances": img_batch.tolist()
