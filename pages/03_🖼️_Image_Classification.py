@@ -9,7 +9,7 @@ import requests
 st.header('POTATO DISEASE CLASSIFICATION')
 
 
-c1,c2,c3 = st.columns([2,8,2])
+c1,c2,c3 = st.columns([2,8,3])
 c1.markdown('\n')
 c1.image('https://img.freepik.com/premium-vector/cute-potato-farmer-cartoon-illustration-vegetable-cartoon-vector-illustration_290315-688.jpg?w=2000')
 

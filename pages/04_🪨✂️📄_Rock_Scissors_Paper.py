@@ -14,7 +14,7 @@ c1.markdown('\n')
 c1.image('https://www.wikihow.com/images/thumb/3/33/Play-Rock%2C-Paper%2C-Scissors-Step-5-Version-3.jpg/v4-460px-Play-Rock%2C-Paper%2C-Scissors-Step-5-Version-3.jpg')
 
 
-endpoint = "https://tf-serve-model1.herokuapp.com/v1/models/model/versions/1:predict"
+endpoint = "https://tf-serve-rsp.herokuapp.com/v1/models/model/versions/1:predict"
 class_names = ["rock", "scissors", "paper"]
 predicted_class = ''
 confidence = ''
