@@ -37,7 +37,7 @@ if uploaded_image is not None:
 
 
 
-c3.metric(label = 'Predicted Classification', value = predicted_class ,delta = confidence +'%')
+c3.metric(label = 'Predicted Classification', value = predicted_class , delta = confidence)
 
 
 

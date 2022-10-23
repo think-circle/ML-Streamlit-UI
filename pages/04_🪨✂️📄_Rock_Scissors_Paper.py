@@ -40,7 +40,7 @@ if camera_image is not None:
     confidence = 100*round(np.max(prediction),2)
 
 
-c3.metric(label = 'Predicted Classification', value = predicted_class ,delta = confidence +'%')
+c3.metric(label = 'Predicted Classification', value = predicted_class ,delta = confidence)
 
 
 
