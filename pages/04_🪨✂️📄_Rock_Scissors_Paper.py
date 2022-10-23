@@ -6,16 +6,17 @@ import numpy as np
 from io import BytesIO
 import requests
 
-st.header('POTATO DISEASE CLASSIFICATION')
+st.header('ROCK 🪨 SCISSORS✂️ PAPER📄 GAME')
 
 
 c1,c2,c3 = st.columns([2,8,2])
 c1.markdown('\n')
-c1.image('https://www.nurseryrhymes.org/nursery-rhymes-styles/images/one-potatoe-two-potatoes.jpg')
+c1.image('https://www.wikihow.com/images/thumb/3/33/Play-Rock%2C-Paper%2C-Scissors-Step-5-Version-3.jpg/v4-460px-Play-Rock%2C-Paper%2C-Scissors-Step-5-Version-3.jpg')
 
 
 endpoint = "https://tf-serve-model1.herokuapp.com/v1/models/model/versions/1:predict"
-class_names = ["Early Blight", "Late Blight", "Healthy"]
+class_names = ["rock", "scissors", "paper"]
+predicted_class,confidence = ''
 
 # Camera with Porgress bar
 camera_image = c2.camera_input('Take a Photo!!!')
@@ -37,8 +38,6 @@ if camera_image is not None:
 
     predicted_class = class_names[np.argmax(prediction)]
     confidence = 100*round(np.max(prediction),2)
-    c1.markdown(predicted_class)
-    c1.markdown(confidence)
 
 
 c3.metric(label = 'Predicted Classification', value = predicted_class ,delta = confidence +'%')
