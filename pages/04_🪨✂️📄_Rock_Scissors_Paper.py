@@ -10,7 +10,7 @@ st.header('ROCK 🪨 SCISSORS✂️ PAPER📄 GAME')
 
 c1,c2,c3 = st.columns([2,8,2])
 model_version = 1
-model_version= c1.selectbox("Choose Model", (1,2,3,4))
+model_version= c1.selectbox("Choose Model", ('1','2','3','4','5','6','7'))
 c1.image('https://www.wikihow.com/images/thumb/3/33/Play-Rock%2C-Paper%2C-Scissors-Step-5-Version-3.jpg/v4-460px-Play-Rock%2C-Paper%2C-Scissors-Step-5-Version-3.jpg')
 
 c2.markdown(f"https://tf-serve-rsp.herokuapp.com/v1/models/model/versions/{model_version}:predict")
@@ -36,10 +36,13 @@ if camera_image is not None:
     }
 
     response = requests.post(endpoint, json=json_data)
+    print(response)
     
     prediction = np.array(response.json()["predictions"][0])
-    c2.markdown(response)
-    c2.markdown(prediction)
+    i = 0
+    for class_ in class_names:
+        c2.markdown(f"{class_}: {100*round(np.max(prediction[i]),2)}% confidence")
+        i = i+1
 
     predicted_class = class_names[np.argmax(prediction)]
     print(predicted_class)
@@ -56,13 +59,17 @@ if uploaded_image is not None:
 
     response = requests.post(endpoint, json=json_data)
     prediction = np.array(response.json()["predictions"][0])
-
-    c2.markdown(response)
-    c2.markdown(prediction)
-
+    
+    i = 0
+    for class_ in class_names:
+        c2.markdown(f"{class_}:  {100*round(np.max(prediction[i]),2)} %")
+        i = i+1
 
     predicted_class = class_names[np.argmax(prediction)]
     confidence = 100*round(np.max(prediction),2)
+
+
+
 
 c3.metric(label = 'Predicted Classification', value = predicted_class ,delta = confidence)
 
