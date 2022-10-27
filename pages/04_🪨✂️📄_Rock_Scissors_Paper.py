@@ -32,13 +32,15 @@ if camera_image or uploaded_image is not None:
         time.sleep(0.02)
         progress_bar.progress(percent_comp+1)
     c2.success('Photo taken successfully')
-   
+    print(type(image_used))
+    print(type(image_used))
+    print(type(image_used))
     image = np.array(Image.open(BytesIO(image_used.read())))
     img_batch = np.expand_dims(image, 0)
     json_data = {
         "instances": img_batch.tolist()
     }
-
+    
     response = requests.post(endpoint, json=json_data)
     prediction = np.array(response.json()["predictions"][0])
     i = 0
@@ -54,14 +56,13 @@ if camera_image or uploaded_image is not None:
 
 
 with st.expander('Click to see more info'):
-    st.write('Currently Selected image for prediction:')
-    if camera_image is not None:
-        st.image(camera_image)
-    elif uploaded_image is not None:
-        st.image(uploaded_image)
+    
+    if camera_image or uploaded_image is not None:
+        st.write('Currently Selected image for prediction:')
+        st.image(image_used)
     else:
         st.write('No Image taken')
-        st.image('https://thumbs.dreamstime.com/z/funny-ugly-face-154818490.jpg')
+        st.image('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZL5p16YV5QRk9p4t7VCNlp-PU2-5Yhv7wwg&usqp=CAU')
        
           
 
